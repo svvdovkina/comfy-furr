@@ -3,6 +3,7 @@ import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom'
 import { Navbar, Sidebar, Footer } from './components'
 
 import {About, Cart, Checkout, Home, Products, SingleProduct, Error} from "./pages"
+import ErrorPage from './pages/ErrorPage'
 
 const router = createBrowserRouter([
   {
@@ -39,6 +40,10 @@ const router = createBrowserRouter([
       {
         path: '/products/:id',
         element: <SingleProduct/>
+      },
+      {
+        path: '*',
+        element: <ErrorPage/>
       }
     ]
   }

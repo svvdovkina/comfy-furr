@@ -40,6 +40,8 @@ const NavContainer = styled.nav`
   justify-content: center;
 
   .nav-center {
+    display: flex;
+    justify-content: space-between;
     width: 90vw;
     margin: 0 auto;
     max-width: var(--max-width);
