@@ -50,7 +50,7 @@ const products_reducer = (state, action) => {
     const product = action.payload;
     return {
       ...state, 
-      products_loading: false,
+      single_product_loading: false,
       single_product: product
     }
   }
