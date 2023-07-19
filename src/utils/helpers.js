@@ -6,4 +6,16 @@ export const formatPrice = (price) => {
     return formatedPrice
 }
 
-export const getUniqueValues = () => {}
+export const getUniqueValues = (data, type) => {
+    
+    let unique = data.map(it=>it[type]);
+    
+    // if data[i][type] is array - flatten the array
+    if (Array.isArray(unique[0])) {
+        
+        unique = unique.flat();
+
+    }
+
+    return ['all', ...new Set(unique)]
+}
