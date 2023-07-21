@@ -1,23 +1,79 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
-import { loadStripe } from '@stripe/stripe-js'
-import {
-  CardElement,
-  useStripe,
-  Elements,
-  useElements,
-} from '@stripe/react-stripe-js'
-import axios from 'axios'
 import { useCartContext } from '../context/cart_context'
 import { useUserContext } from '../context/user_context'
 import { formatPrice } from '../utils/helpers'
-import { useHistory } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 
 const CheckoutForm = () => {
-  return <h4>hello from Stripe Checkout </h4>
+
+  const {
+    total_amount, 
+    shipping_fee, 
+    clearCart} = useCartContext();
+
+  const {myUser} = useUserContext();
+
+  const navigate = useNavigate();
+
+
+  const [succeeded, setSucceeded] = useState(false);
+
+  const cardStyle = {
+    style: {
+      base: {
+        color: '#32325d',
+        fontFamily: 'Arial, sans-serif',
+        fontSmoothing: 'antialiased',
+        fontSize: '16px',
+        '::placeholder': {
+          color: '#32325d',
+        },
+      },
+      invalid: {
+        color: '#fa755a',
+        iconColor: '#fa755a',
+      },
+    },
+  };
+
+  const submit = (e)=>{
+    e.preventDefault();
+    setSucceeded(true);
+    setTimeout(()=>{
+      clearCart();
+      navigate('/');
+    },5000)
+  }
+
+
+  return <div>
+    {
+      succeeded ? 
+      <article>
+        <h4>Thank you!</h4>
+        <p>Redirecting to the home page shortly ...</p>
+      </article> : 
+      <article>
+        <h4>Hello, {myUser && myUser.name}</h4>
+        <p>Your total is {formatPrice(total_amount + shipping_fee)}</p>
+      </article>
+    }
+    <form onSubmit={submit}>
+      <input className={succeeded &&'hidden'} id='card-element' options={cardStyle}
+      placeholder='Card number'/>
+      <button className={succeeded &&'hidden'} type='submit'>Pay</button>
+      <p className={succeeded?'result-message':'hidden'}>
+        Payment succeeded! You are the best!
+        <Link to='/products'> Go shop again </Link>
+      </p>
+    </form>
+  </div>
 }
 
 const StripeCheckout = () => {
+
+
   return (
     <Wrapper>
       <CheckoutForm />
@@ -27,7 +83,8 @@ const StripeCheckout = () => {
 
 const Wrapper = styled.section`
   form {
-    width: 30vw;
+    width: 50vw;
+    max-width: 500px;
     align-self: center;
     box-shadow: 0px 0px 0px 0.5px rgba(50, 50, 93, 0.1),
       0px 2px 5px 0px rgba(50, 50, 93, 0.1),
@@ -57,13 +114,6 @@ const Wrapper = styled.section`
   }
   .hidden {
     display: none;
-  }
-  #card-error {
-    color: rgb(105, 115, 134);
-    font-size: 16px;
-    line-height: 20px;
-    margin-top: 12px;
-    text-align: center;
   }
   #card-element {
     border-radius: 4px 4px 0 0;
@@ -96,58 +146,7 @@ const Wrapper = styled.section`
   button:hover {
     filter: contrast(115%);
   }
-  button:disabled {
-    opacity: 0.5;
-    cursor: default;
-  }
-  /* spinner/processing state, errors */
-  .spinner,
-  .spinner:before,
-  .spinner:after {
-    border-radius: 50%;
-  }
-  .spinner {
-    color: #ffffff;
-    font-size: 22px;
-    text-indent: -99999px;
-    margin: 0px auto;
-    position: relative;
-    width: 20px;
-    height: 20px;
-    box-shadow: inset 0 0 0 2px;
-    -webkit-transform: translateZ(0);
-    -ms-transform: translateZ(0);
-    transform: translateZ(0);
-  }
-  .spinner:before,
-  .spinner:after {
-    position: absolute;
-    content: '';
-  }
-  .spinner:before {
-    width: 10.4px;
-    height: 20.4px;
-    background: #5469d4;
-    border-radius: 20.4px 0 0 20.4px;
-    top: -0.2px;
-    left: -0.2px;
-    -webkit-transform-origin: 10.4px 10.2px;
-    transform-origin: 10.4px 10.2px;
-    -webkit-animation: loading 2s infinite ease 1.5s;
-    animation: loading 2s infinite ease 1.5s;
-  }
-  .spinner:after {
-    width: 10.4px;
-    height: 10.2px;
-    background: #5469d4;
-    border-radius: 0 10.2px 10.2px 0;
-    top: -0.1px;
-    left: 10.2px;
-    -webkit-transform-origin: 0px 10.2px;
-    transform-origin: 0px 10.2px;
-    -webkit-animation: loading 2s infinite ease;
-    animation: loading 2s infinite ease;
-  }
+
   @keyframes loading {
     0% {
       -webkit-transform: rotate(0deg);
