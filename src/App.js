@@ -2,7 +2,7 @@ import React from 'react'
 import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom'
 import { Navbar, Sidebar, Footer } from './components'
 
-import {About, Cart, Checkout, Home, Products, SingleProduct, Error} from "./pages"
+import {About, Cart, Checkout, Home, Products, SingleProduct, Error, PrivateRoute, AuthWrapper} from "./pages"
 import ErrorPage from './pages/ErrorPage'
 
 const router = createBrowserRouter([
@@ -35,7 +35,10 @@ const router = createBrowserRouter([
       },
       {
         path: '/checkout',
-        element: <Checkout/>
+        element: <PrivateRoute>
+            <Checkout/>
+        </PrivateRoute>
+        
       },
       {
         path: '/products/:id',
@@ -50,7 +53,10 @@ const router = createBrowserRouter([
 ])
 
 function App() {
-  return <RouterProvider router={router}/>
+  return <AuthWrapper>
+    <RouterProvider router={router}/>
+  </AuthWrapper>
+  
   
 }
 
